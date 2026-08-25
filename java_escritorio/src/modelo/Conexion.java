@@ -14,7 +14,7 @@ public class Conexion {
     public Connection conexionBD;
     private final String urlConexion= "jdbc:mysql://localhost:3306/db_empresa?serverTimezone=UTC";
     private final String usuario = "root";
-    private final String contra = "Admin@123";
+    private final String contra = "Aaco3521@$";
     private final String jdbc = "com.mysql.cj.jdbc.Driver";
     
     public void abrir_conexion(){

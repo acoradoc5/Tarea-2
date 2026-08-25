@@ -8,30 +8,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Programador
- */
 public class Cliente extends Persona {
     Conexion cn;
-    private int id; // 1
+    private int id;
     private String nit;
    
 
     public Cliente() {
     }
-                    // 2
+                    
     public Cliente(int id,String nit, String cui, String nombres, String apellidos, String direccion, String telefono, String fecha_nacimiento) {
         super(cui, nombres, apellidos, direccion, telefono, fecha_nacimiento);
-        this.id = id; // 3
+        this.id = id; 
         this.nit = nit;
         
     }
-    // 4
+    
     public int getId() {
         return id;
     }
-    // 5
+    
     public void setId(int id) {
         this.id = id;
     }
@@ -42,20 +38,20 @@ public class Cliente extends Persona {
     public void setNit(String nit) {
         this.nit = nit;
     }
-
+// Modificacióm método leer()
     @Override
   public DefaultTableModel leer(){
   DefaultTableModel tabla = new DefaultTableModel();
   try{
      cn = new Conexion();
      cn.abrir_conexion();
-     String query = "select * from clientes;";
+     String query = "select * from clientes where activo = 1;";
      ResultSet consulta = cn.conexionBD.createStatement().executeQuery(query);
-     String encabezado[] = {"id_cliente","cui","nit","nombres","apellidos","direccion","telefono","nacimiento"};
+     String encabezado[] = {"id_clientes","cui","nit","nombres","apellidos","direccion","telefono","nacimiento"};
      tabla.setColumnIdentifiers(encabezado);
      String datos[] = new String[8];
      while(consulta.next()){
-         datos[0] = consulta.getString("id_cliente");
+         datos[0] = consulta.getString("id_clientes");
          datos[1] = consulta.getString("cui");
          datos[2] = consulta.getString("nit");
          datos[3] = consulta.getString("nombres");
@@ -71,13 +67,14 @@ public class Cliente extends Persona {
   }
   return tabla;
   }
+  // Modificacióm método crear()
     @Override
  public void crear(){
      try{
          PreparedStatement parametro;
          cn = new Conexion();
          cn.abrir_conexion();
-         String query = "insert into clientes(cui,nit,nombres,apellidos,direccion,telefono,fecha_nacimiento) values(?,?,?,?,?,?,?);";
+         String query = "insert into clientes(cui, nit, nombres, apellidos, direccion, telefono, fecha_nacimiento, fecha_ingreso_registro, activo) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), 1);";
          parametro = (PreparedStatement) cn.conexionBD.prepareStatement(query);
          parametro.setString(1, this.getCui());
          parametro.setString(2, this.getNit());
@@ -98,7 +95,7 @@ public class Cliente extends Persona {
          PreparedStatement parametro;
          cn = new Conexion();
          cn.abrir_conexion();
-         String query = "update clientes set cui = ?,nit = ?,nombres = ?,apellidos = ?,direccion = ?,telefono = ?,fecha_nacimiento =? where id_cliente = ?;";
+         String query = "update clientes set cui = ?,nit = ?,nombres = ?,apellidos = ?,direccion = ?,telefono = ?,fecha_nacimiento =? where id_clientes = ?;";
          parametro = (PreparedStatement) cn.conexionBD.prepareStatement(query);
          parametro.setString(1, this.getCui());
          parametro.setString(2, this.getNit());
@@ -114,14 +111,14 @@ public class Cliente extends Persona {
          System.out.println("Error:" + ex.getMessage());
      }  
 } 
-
+// Modificacióm método borrar()
     @Override
     public void borrar(){
         try{
          PreparedStatement parametro;
          cn = new Conexion();
          cn.abrir_conexion();
-         String query = "delete from clientes where id_cliente = ?;";
+         String query = "update clientes SET activo = 0, fecha_eliminacion = NOW() WHERE id_clientes = ?;";
          parametro = (PreparedStatement) cn.conexionBD.prepareStatement(query);
          parametro.setInt(1, this.getId());
          parametro.executeUpdate();
